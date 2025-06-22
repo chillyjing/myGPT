@@ -3,14 +3,19 @@ from importlib.metadata import version
 import tiktoken
 import torch
 from torch.utils.data import Dataset, DataLoader
+import json
 
 text_path = r".\the_verdict.txt"
-with open(text_path, "r", encoding="utf-8") as f:
+vocab_path = r".\vocab.json"
+with open(text_path, "r", encoding="utf-8") as f,\
+     open(vocab_path, 'w', encoding='utf-8') as f1:
     raw_text = f.read()
     preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', raw_text)
     preprocessed = [item.strip() for item in preprocessed if item.strip()]
     all_words = sorted(set(preprocessed))
     vocab = {token:integer for integer,token in enumerate(all_words)}
+    json.dump(vocab, f1)
+
 
 '''class SimpleTokenizerV1:
     def __init__(self, vocab):
@@ -57,8 +62,7 @@ max_length=4
 dataloader = create_dataloader_v1(raw_text, batch_size=8, max_length=max_length, stride=4, shuffle=False)
 data_iter = iter(dataloader) #创建迭代器
 inputs, target = next(data_iter)
-# print("Inputs:\n", inputs)  #8*4
-# print("\nTargets:\n", target)
+
 vocab_size = 50257
 output_dim = 256
 token_embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
@@ -67,5 +71,7 @@ token_embeddings = token_embedding_layer(inputs)
 context_length = max_length
 pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
 pos_embeddings = pos_embedding_layer(torch.arange(context_length))
-print(pos_embeddings)
 input_embeddings = token_embeddings + pos_embeddings
+
+if "__name__" == "__main__":
+    print(input_embeddings)
