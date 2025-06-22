@@ -58,6 +58,7 @@ def create_dataloader_v1(txt, batch_size=4, max_length=256, stride=128, shuffle=
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last, num_workers=0)
     return dataloader
 
+
 max_length=4
 dataloader = create_dataloader_v1(raw_text, batch_size=8, max_length=max_length, stride=4, shuffle=False)
 data_iter = iter(dataloader) #创建迭代器
